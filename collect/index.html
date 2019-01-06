@@ -1,0 +1,83 @@
+<html>
+<head>
+    <title>Nerva</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <link rel="stylesheet" type="text/css" href="nerva.css">
+
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+    <script src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+
+<div id="map" style="width: 600px; height: 400px;"></div>
+<div>
+    <table border="1" cellspacing="2" cellpadding="2">
+        <thead>
+            <tr><th>Time</th><th>Lat</th><th>Lon</th><th>Acc</th><th>Alt</th><th>AltAcc</th></tr>
+        </thead>
+        <tbody id="gpsdata"></tbody>
+    </table>
+</div>
+
+<script>
+
+    var watch;
+    var map = L.map('map').fitWorld();
+    var MB_TOKEN_KEY = 'MAPBOX_TOKEN';
+    var MAPBOX_TOKEN = null;
+
+    function showPosition(position) {
+        var row = $('<tr></tr>');
+        row.append($('<td>Time '+Date.now()+'</td>'));
+        row.append($('<td>Lat '+position.coords.latitude+'</td>'));
+        row.append($('<td>Lon '+position.coords.longitude+'</td>'));
+        row.append($('<td>Acc '+position.coords.accuracy+'</td>'));
+        row.append($('<td>Alt '+position.coords.altitude+'</td>'));
+        row.append($('<td>AltAcc '+position.coords.altitudeAccuracy+'</td>'));
+        $('#gpsdata').prepend(row);
+        map.setView([position.coords.latitude, position.coords.longitude], 20);
+        L.circle([position.coords.latitude, position.coords.longitude], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 5
+        }).addTo(map);
+    }
+
+    $(function () {
+        if (MAPBOX_TOKEN == null) {
+            MAPBOX_TOKEN = localStorage.getItem(MB_TOKEN_KEY);
+            if (typeof MAPBOX_TOKEN === "undefined" || MAPBOX_TOKEN == null) {
+                MAPBOX_TOKEN = window.prompt('API key for MapBox');
+                localStorage.setItem(MB_TOKEN_KEY, MAPBOX_TOKEN)
+            }
+        }
+
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='+MAPBOX_TOKEN, {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox.streets'
+        }).addTo(map);
+
+        if (navigator.geolocation) {
+            watch = navigator.geolocation.watchPosition(showPosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    });
+
+</script>
+
+</body>
+</html>
