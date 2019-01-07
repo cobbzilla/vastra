@@ -5,23 +5,28 @@ Nerva aims to provide privacy-first GPS tracking tools for fitness purposes.
 Runners, cyclists and many other athletes enjoy the power of commercial GPS services. But how hard are they really? It's GPS and a map at the end of the day. This is not rocket science. Why are we so comfortable giving our data
 to third parties?
 
-Nerva is self-hosted. You will never send your data to any third party.
+## Data Privacy
+Nerva is self-hosted and does not send your data to any third party.
+Nerva uses MapBox for loading map tiles from OpenStreetMap.
+For the truly paranoid, you could host your own map tiles; I'm OK with MapBox knowing which map tiles I load, for now.
 
-Nerva offers two different tools, one low-level and one slightly higher-level
+Nerva offers two different tools, one low-level and one higher-level.
 
-## Nerva Collect
-Nerval Collect is a low-level GPS data collection tool. It is a simple static website that you can host anywhere. If you wondered how easy it could be to put GPS dots on a map, this makes a deent starter kit.
+## Nerva Tools
 
-### MapBox
-Upon first load, you'll be asked for your MapBox API key (for OpenStreetMaps). You can get a free one from MapBox. If you don't enter an API key, the GPS tracking will still work, but you won't see the map.
+### Collect
+Nerva Collect is a low-level GPS data collection tool. It is a simple static website that you can host anywhere. If you wondered how easy it could be to put GPS dots on a map, this makes a decent starter kit.
 
-### How it works
+#### MapBox
+Upon first load, you'll be asked for your MapBox API key. You can get a free one from MapBox. If you don't enter an API key, the GPS tracking will still work, but you won't see the map.
+
+#### How it works
 Nerva Collect tracks your location on a map, and puts a red circle on the map every time it is notified of a change.
  * You can download the data as a CSV at any time.
  * GPS data is only stored in the browser session. You will lose all the data when you reload the page, unless you download it.
  * Only your MapBox key is stored in HTML local storage on your device. You can clear it at any time.
 
-## TODO: Nerva Workout
+### TODO: Nerva Workout
 
 Nerva Workout will extend Nerva Collect to coalesce raw GPS measurements into digested "virtual locations" by averaging recent values and discarding significant outliers.
 
