@@ -21,6 +21,10 @@
 
 <div id="map" style="width: 600px; height: 400px;"></div>
 
+<button onclick="generateCSV()">generate CSV</button>
+<div id="csvDiv">
+</div>
+
 <div>
     <table border="1" cellspacing="2" cellpadding="2">
         <thead>
@@ -30,16 +34,19 @@
     </table>
 </div>
 
+<button onclick="resetAll()">reset</button>
+
 <script>
 
     var watch;
     var map = L.map('map').fitWorld();
     var MB_TOKEN_KEY = 'MAPBOX_TOKEN';
     var MAPBOX_TOKEN = null;
-    // var data = [];
+    var gpsData = [];
 
     function showPosition(position) {
         var datum = {
+          time: Date.now(),
           lat: position.coords.latitude,
           lon: position.coords.longitude,
           accuracy: position.coords.accuracy,
@@ -61,7 +68,22 @@
             fillOpacity: 0.5,
             radius: 5
         }).addTo(map);
-        // data.append(datum);
+        gpsData.push(datum);
+    }
+
+    function generateCSV () {
+        var csvData = "Time,Lat,Lon,Accuracy,Alt,AltAccuracy\r\n";
+        for (var i=0; i < gpsData.length; i++) {
+            var datum = gpsData[i];
+            csvData = csvData + datum.time + "," + datum.lat+","+datum.lon+","+datum.accuracy+","+datum.altitude+","+datum.altitudeAccuracy+"\r\n";
+        }
+        var now = Date.now();
+        $('#csvDiv').html('<a download="nerva_gps_'+now+'.csv" href="data:text/csv;charset=utf-8,'+encodeURIComponent(csvData)+'">download CSV</a>');
+    }
+
+    function resetAll () {
+        localStorage.clear();
+        location.reload();
     }
 
     $(function () {
