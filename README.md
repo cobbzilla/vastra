@@ -25,6 +25,15 @@ Nerva Collect tracks your location on a map, and puts a red circle on the map ev
  * GPS data is only stored in the browser session. You will lose all the data when you reload the page, unless you download it.
  * Only your MapBox key is stored in HTML local storage on your device. You can clear it at any time.
 
+#### Installation
+
+On some webserver that you have access to:
+
+    git clone https://github.com/cobbzilla/nerva.git
+
+After cloning the repo, copy or symlink the `nerva/site` to someplace accessible via your web server.
+If you copied `nerva/site` to `<<docroot>>/nerva`, the Nerva Collector can be accessed via `https://yoursite.example.com/nerva/collect.html`
+
 ### TODO: Nerva Workout
 
 Nerva Workout will extend Nerva Collect to coalesce raw GPS measurements into digested "virtual locations" by averaging recent values and discarding significant outliers.
