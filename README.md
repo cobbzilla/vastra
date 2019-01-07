@@ -10,11 +10,10 @@ Nerva is self-hosted and does not send your data to any third party.
 Nerva uses MapBox for loading map tiles from OpenStreetMap.
 For the truly paranoid, you could host your own map tiles; I'm OK with MapBox knowing which map tiles I load, for now.
 
+## Nerva Tools
 Nerva offers two different tools, one low-level and one higher-level.
 
-## Nerva Tools
-
-### Collect
+### Nerva Collect
 Nerva Collect is a low-level GPS data collection tool. It is a simple static website that you can host anywhere. If you wondered how easy it could be to put GPS dots on a map, this makes a decent starter kit.
 
 #### MapBox
