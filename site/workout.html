@@ -24,18 +24,11 @@
 
 <div id="map" style="width: 600px; height: 400px;"></div>
 
-<button onclick="generateCSV()">generate CSV</button>
-<div id="csvDiv">
-</div>
+<button onclick="startWorkout()">Start Workout</button>
+<button onclick="pauseWorkout()">Pause Workout</button>
+<button onclick="endWorkout()">End Workout</button>
 
-<div>
-    <table border="1" cellspacing="2" cellpadding="2">
-        <thead>
-            <tr><th>Time</th><th>Lat</th><th>Lon</th><th>Acc</th><th>Alt</th><th>AltAcc</th></tr>
-        </thead>
-        <tbody id="gpsdata"></tbody>
-    </table>
-</div>
+<button onclick="viewWorkouts()">View Workouts</button>
 
 <button onclick="resetAll()">Clear ALL Data</button>
 
@@ -43,20 +36,10 @@
 
 <script>
 
-    function showPosition(datum) {
-        const row = $('<tr></tr>');
-        row.append($('<td>Time '+Date.now()+'</td>'));
-        row.append($('<td>Lat '+datum.lat+'</td>'));
-        row.append($('<td>Lon '+datum.lon+'</td>'));
-        row.append($('<td>Acc '+datum.accuracy+'</td>'));
-        row.append($('<td>Alt '+datum.altitude+'</td>'));
-        row.append($('<td>AltAcc '+datum.altitudeAccuracy+'</td>'));
-        $('#gpsdata').prepend(row);
-        setView(datum);
-        addCircle(datum);
+    function updateVirtualPoint(datum) {
     }
 
-    $(function () { initNerva(showPosition, L); });
+    $(function () { initNerva(updateVirtualPoint, L); });
 
 </script>
 
