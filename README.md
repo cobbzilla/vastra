@@ -5,7 +5,7 @@ Nerva aims to provide privacy-first GPS tracking tools for fitness purposes.
 Runners, cyclists and many other athletes enjoy the power of commercial GPS services. But how hard are they really? It's GPS and a map at the end of the day. This is not rocket science. Why are we so comfortable giving our data
 to third parties?
 
-Nerva is self-hosted. You will neaver send your data to any third party.
+Nerva is self-hosted. You will never send your data to any third party.
 
 Nerva offers two different tools, one low-level and one slightly higher-level
 
