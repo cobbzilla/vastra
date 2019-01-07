@@ -19,8 +19,8 @@
 </head>
 <body>
 
-
 <div id="map" style="width: 600px; height: 400px;"></div>
+
 <div>
     <table border="1" cellspacing="2" cellpadding="2">
         <thead>
@@ -36,23 +36,32 @@
     var map = L.map('map').fitWorld();
     var MB_TOKEN_KEY = 'MAPBOX_TOKEN';
     var MAPBOX_TOKEN = null;
+    // var data = [];
 
     function showPosition(position) {
+        var datum = {
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          altitude: position.coords.altitude,
+          altitudeAccuracy: position.coords.altitudeAccuracy
+        };
         var row = $('<tr></tr>');
         row.append($('<td>Time '+Date.now()+'</td>'));
-        row.append($('<td>Lat '+position.coords.latitude+'</td>'));
-        row.append($('<td>Lon '+position.coords.longitude+'</td>'));
-        row.append($('<td>Acc '+position.coords.accuracy+'</td>'));
-        row.append($('<td>Alt '+position.coords.altitude+'</td>'));
-        row.append($('<td>AltAcc '+position.coords.altitudeAccuracy+'</td>'));
+        row.append($('<td>Lat '+datum.lat+'</td>'));
+        row.append($('<td>Lon '+datum.lon+'</td>'));
+        row.append($('<td>Acc '+datum.accuracy+'</td>'));
+        row.append($('<td>Alt '+datum.altitude+'</td>'));
+        row.append($('<td>AltAcc '+datum.altitudeAccuracy+'</td>'));
         $('#gpsdata').prepend(row);
-        map.setView([position.coords.latitude, position.coords.longitude], 20);
-        L.circle([position.coords.latitude, position.coords.longitude], {
+        map.setView([datum.lat, datum.lon], 20);
+        L.circle([datum.lat, datum.lon], {
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.5,
             radius: 5
         }).addTo(map);
+        // data.append(datum);
     }
 
     $(function () {
