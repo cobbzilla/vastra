@@ -38,6 +38,8 @@ const Tracker1D = {
         const mPd = mQd;
 
         return {
+            accuracyValues: [],
+
             // time step
             mt: mt,
             mt2: mt2,
@@ -92,6 +94,7 @@ const Tracker1D = {
              * @param noise
              */
             update: function(position, noise) {
+                if (position.accuracy != null) this.accuracyValues.push(position.accuracy);
 
                 const r = noise * noise;
 
@@ -148,7 +151,14 @@ const Tracker1D = {
 
             getPosition: function () { return this.mXa; },
             getVelocity: function () { return this.mXb; },
-            getAccuracy: function () { return Math.sqrt(mPd / mt2); }
+            defaultAccuracy: function () { return 20; },
+            getAccuracy: function () {
+                if (this.accuracyValues.length === 0) return this.defaultAccuracy();
+                NERVA.log('getAccuracy: vals='+JSON.stringify(this.accuracyValues));
+                let sum = 0.0;
+                for (let i=0; i<this.accuracyValues.length; i++) sum += this.accuracyValues[i];
+                return 1 + Math.floor(sum / this.accuracyValues.length);
+            }
         };
     }
 };
@@ -161,7 +171,7 @@ const KALMAN = function () {
         lastLocation: null,
         predicted: false,
         handleGPS: function (location) {
-            NERVA.log('Kalman.handleGPS('+JSON.stringify(location)+') starting');
+            // NERVA.log('Kalman.handleGPS('+JSON.stringify(location)+') starting');
             // Reusable
             const accuracy = location.accuracy;
 
@@ -210,7 +220,7 @@ const KALMAN = function () {
             // Reset predicted flag
             this.predicted = false;
             this.lastLocation = location;
-            NERVA.log('Kalman.handleGPS('+JSON.stringify(location)+') finished OK, predicted now=false');
+            // NERVA.log('Kalman.handleGPS('+JSON.stringify(location)+') finished OK, predicted now=false');
         },
 
         location: function () {
@@ -226,13 +236,13 @@ const KALMAN = function () {
                 lon:       this.lonTracker.getPosition(),
                 altitude:  this.lastLocation != null && this.lastLocation.altitude != null && this.altTracker != null ? this.altTracker.getPosition() : null,
                 alt:       this.lastLocation != null && this.lastLocation.altitude != null && this.altTracker != null ? this.altTracker.getPosition() : null,
-                accuracy:  this.latTracker.getAccuracy() * DEG_TO_METER,
+                accuracy:  this.latTracker.getAccuracy(),
                 altitudeAccuracy: null,
                 altAccuracy:      null
             };
 
             this.predicted = true;
-            NERVA.log('Kalman.location() returning ' + JSON.stringify(point));
+            // NERVA.log('Kalman.location() returning ' + JSON.stringify(point));
             return point;
         }
     };

@@ -1,5 +1,4 @@
-const KALMAN_SAMPLING_MILLIS = 20000;
-
+const KALMAN_SAMPLING_MILLIS = 8000;
 
 const WORKOUT = {
     vdata: [],
@@ -53,14 +52,11 @@ const WORKOUT = {
             NERVA.log('sampleKalmanPoint: kalman was null');
         } else {
             const datum = WORKOUT.kalman.location();
-            showDataRow(datum);
+            NERVA.showDataRow(datum);
             WORKOUT.vdata.push(datum);
             NERVA.log('defined new vpoint: ' + JSON.stringify(datum));
-            return showPosition(datum);
+            return NERVA.showPosition(datum);
         }
-    },
-
-    viewWorkouts: function () { /* todo */ }
-
+    }
 };
 

@@ -9,13 +9,14 @@ const NERVA = {
     watch: null,
     mapApiToken: null,
     map: null,
+    zoomed: false,
     gpsData: [],
     gpsDots: [],
     L: null,
     gpsHandlerFunc: null,
     paused: false,
 
-    init: function (gpsHandlerFunc, L, start = true) {
+    init: function (gpsHandlerFunc = NERVA.showDataRow, L = L, start = true) {
         NERVA.L = L;
         NERVA.map = L.map('map').fitWorld();
         NERVA.gpsHandlerFunc = gpsHandlerFunc;
@@ -54,7 +55,7 @@ const NERVA = {
 
             NERVA.paused = false;
             NERVA.watch = navigator.geolocation.watchPosition(function (position) {
-                const datum = gpsDatum(position);
+                const datum = NERVA.gpsDatum(position);
                 // NERVA.log("watchPosition: GPS coords "+JSON.stringify(datum));
                 NERVA.gpsData.push(datum);
                 NERVA.gpsHandlerFunc(datum);
@@ -86,6 +87,69 @@ const NERVA = {
         }
     },
 
+    setView: function (datum, zoom = null) {
+        if (zoom != null || !NERVA.zoomed) {
+            NERVA.map.setView([datum.lat, datum.lon], zoom == null ? 16 : zoom);
+        } else {
+            NERVA.map.setView([datum.lat, datum.lon]);
+        }
+    },
+
+    showPosition: function (datum) {
+        NERVA.setView(datum);
+        return NERVA.addCircle(datum);
+    },
+
+
+    gpsDatum: function (position) {
+        return {
+            time: Date.now(),
+            lat:       position.coords.latitude,
+            latitude:  position.coords.latitude,
+            lon:       position.coords.longitude,
+            longitude: position.coords.longitude,
+            accuracy:  position.coords.accuracy,
+            altitude:  position.coords.altitude,
+            alt:       position.coords.altitude,
+            altitudeAccuracy: position.coords.altitudeAccuracy,
+            altAccuracy:      position.coords.altitudeAccuracy
+        };
+    },
+
+    addCircle: function  (datum, color = 'red', fillColor = '#f03') {
+        NERVA.log('adding circle with radius '+(datum.accuracy != null ? datum.accuracy : 20));
+        const circle = NERVA.L.circle([datum.lat, datum.lon], {
+            color: color,
+            fillColor: fillColor,
+            fillOpacity: 0.5,
+            radius: datum.accuracy != null ? 1+Math.floor(datum.accuracy/2) : 20
+        });
+        circle.addTo(NERVA.map);
+        return circle;
+    },
+
+    showDataRow: function (datum, divId = 'gpsdata') {
+        const row = $('<tr></tr>');
+        row.append($('<td>Time '+new Date(datum.time)+'</td>'));
+        row.append($('<td>Lat '+datum.lat+'</td>'));
+        row.append($('<td>Lon '+datum.lon+'</td>'));
+        row.append($('<td>Acc '+datum.accuracy+'</td>'));
+        row.append($('<td>Alt '+datum.alt+'</td>'));
+        row.append($('<td>AltAcc '+datum.altitudeAccuracy+'</td>'));
+        $('#'+divId).prepend(row);
+        NERVA.showPosition(datum);
+    },
+
+    generateCSV: function (data = NERVA.gpsData, divId = 'csvDiv') {
+        let csvData = "Time,Lat,Lon,Accuracy,Alt,AltAccuracy\r\n";
+        for (let i=0; i < data.length; i++) {
+            const datum = data[i];
+            csvData = csvData + datum.time + "," + datum.lat+","+datum.lon+","+datum.accuracy+","+datum.altitude+","+datum.altitudeAccuracy+"\r\n";
+        }
+        const now = Date.now();
+        $('#'+divId).html('<a download="nerva_'+now+'.csv" href="data:text/csv;charset=utf-8,'+encodeURIComponent(csvData)+'">download CSV</a>');
+    },
+
     log: function (msg, logId = 'log') {
         $('#'+logId).prepend('<p>'+msg+'</p>');
         console.log(msg);
@@ -95,11 +159,12 @@ const NERVA = {
     },
 
     defaultGpsDotShapeFunc: function (datum) {
+        NERVA.log('adding GPS dot with radius '+(datum.accuracy != null ? datum.accuracy : 20));
         return NERVA.L.circle([datum.lat, datum.lon], {
             color: 'green',
             fillColor: '#22ff44',
-            fillOpacity: 0.5,
-            radius: 2
+            fillOpacity: 0.3,
+            radius: datum.accuracy != null ? 1+Math.floor(datum.accuracy/2) : 20
         });
     },
     showGpsDots: function(shapeFunc = this.defaultGpsDotShapeFunc, btnId = 'btnRawGps') {
@@ -124,87 +189,9 @@ const NERVA = {
     },
     hasGpsDots: function () { return NERVA.gpsDots.length > 0; },
     toggleGpsDots: function () { return NERVA.hasGpsDots() ? NERVA.hideGpsDots() : NERVA.showGpsDots(); },
+
+    resetAll:  function () {
+        localStorage.clear();
+        location.reload();
+    }
 };
-
-Array.prototype.clone = function() {
-    return this.slice(0);
-};
-
-function resetAll () {
-    localStorage.clear();
-    location.reload();
-}
-
-
-function gpsDatum (position) {
-    return {
-        time: Date.now(),
-        lat:       position.coords.latitude,
-        latitude:  position.coords.latitude,
-        lon:       position.coords.longitude,
-        longitude: position.coords.longitude,
-        accuracy:  position.coords.accuracy,
-        altitude:  position.coords.altitude,
-        alt:       position.coords.altitude,
-        altitudeAccuracy: position.coords.altitudeAccuracy,
-        altAccuracy:      position.coords.altitudeAccuracy
-    };
-}
-
-function setView(datum, zoom = 20) {
-    NERVA.map.setView([datum.lat, datum.lon], zoom);
-}
-
-function addCircle (datum, color = 'red', fillColor = '#f03') {
-    const circle = NERVA.L.circle([datum.lat, datum.lon], {
-        color: color,
-        fillColor: fillColor,
-        fillOpacity: 0.5,
-        radius: 5
-    });
-    circle.addTo(NERVA.map);
-    return circle;
-}
-
-function showDataRow(datum, divId = 'gpsdata') {
-    const row = $('<tr></tr>');
-    row.append($('<td>Time '+new Date(datum.time)+'</td>'));
-    row.append($('<td>Lat '+datum.lat+'</td>'));
-    row.append($('<td>Lon '+datum.lon+'</td>'));
-    row.append($('<td>Acc '+datum.accuracy+'</td>'));
-    row.append($('<td>Alt '+datum.alt+'</td>'));
-    row.append($('<td>AltAcc '+datum.altitudeAccuracy+'</td>'));
-    $('#'+divId).prepend(row);
-    showPosition(datum);
-}
-
-function showPosition(datum) {
-    setView(datum);
-    return addCircle(datum);
-}
-
-function generateCSV (data = NERVA.gpsData, divId = 'csvDiv') {
-    let csvData = "Time,Lat,Lon,Accuracy,Alt,AltAccuracy\r\n";
-    for (let i=0; i < data.length; i++) {
-        const datum = data[i];
-        csvData = csvData + datum.time + "," + datum.lat+","+datum.lon+","+datum.accuracy+","+datum.altitude+","+datum.altitudeAccuracy+"\r\n";
-    }
-    const now = Date.now();
-    $('#'+divId).html('<a download="nerva_'+now+'.csv" href="data:text/csv;charset=utf-8,'+encodeURIComponent(csvData)+'">download CSV</a>');
-}
-
-function dist (a, b) {
-    if (a == null) {
-        NERVA.log("dist: a was null");
-        return null;
-    }
-    if (b == null) {
-        NERVA.log("dist: b was null");
-        return null;
-    }
-    return Math.sqrt(Math.pow(a.lat - b.lat, 2) + Math.pow(a.lon - b.lon, 2));
-}
-
-function q3 (array) { return array.length === 0 ? null : array[Math.min(array.length-1, Math.ceil(array.length * 0.75))].dist; }
-
-function q1 (array) { return array.length === 0 ? null : array[Math.floor((array.length-1) * 0.25)].dist; }

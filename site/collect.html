@@ -24,7 +24,7 @@
 
 <div id="map" style="width: 600px; height: 400px;"></div>
 
-<button onclick="generateCSV()">generate CSV</button>
+<button onclick="NERVA.generateCSV()">generate CSV</button>
 <div id="csvDiv">
 </div>
 
@@ -37,14 +37,12 @@
     </table>
 </div>
 
-<button onclick="resetAll()">Clear ALL Data</button>
+<button onclick="NERVA.resetAll()">Clear ALL Data</button>
 
 </body>
 
 <script>
-
-    $(function () { NERVA.init(showDataRow, L); });
-
+    $(function () { NERVA.init(); });
 </script>
 
 </html>
