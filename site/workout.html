@@ -18,6 +18,7 @@
             crossorigin=""></script>
     <script src="jquery-3.3.1.min.js"></script>
     <script src="nerva.js"></script>
+    <script src="nerva_kalman.js"></script>
     <script src="nerva_workout.js"></script>
 </head>
 
@@ -25,11 +26,11 @@
 
 <div id="map" style="width: 600px; height: 400px;"></div>
 
-<button id="btnStart" onclick="startTracking()">Start Workout</button>
-<button id="btnPause" onclick="pauseTracking()">Pause Workout</button>
-<button id="btnStop" onclick="stopTracking()">End Workout</button>
+<button id="btnStart" onclick="NERVA.startTracking()">Start Workout</button>
+<button id="btnPause" onclick="NERVA.pauseTracking()">Pause Workout</button>
+<button id="btnStop" onclick="NERVA.stopTracking()">End Workout</button>
 
-<button onclick="viewWorkouts()">View Workouts</button>
+<button id="btnRawGps" onclick="NERVA.toggleGpsDots()">GPS</button>
 
 <div>
     <table border="1" cellspacing="2" cellpadding="2">
@@ -40,16 +41,17 @@
     </table>
 </div>
 
+<hr/>
+<div id="log"></div>
+<hr/>
+
 <button onclick="resetAll()">Clear ALL Data</button>
 
 </body>
 
 <script>
 
-    $(function () {
-        initWorkout();
-        initNerva(updateVirtualPoint, L, false);
-    });
+    $(function () { NERVA.init(WORKOUT.init(), L, false); });
 
 </script>
 

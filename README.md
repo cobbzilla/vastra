@@ -34,11 +34,13 @@ On some webserver that you have access to:
 After cloning the repo, copy or symlink the `nerva/site` to someplace accessible via your web server.
 If you copied `nerva/site` to `<<docroot>>/nerva`, the Nerva Collector can be accessed via `https://yoursite.example.com/nerva/collect.html`
 
-### TODO: Nerva Workout
+### WIP: Nerva Workout
 
-Nerva Workout will extend Nerva Collect to coalesce raw GPS measurements into digested "virtual locations" by averaging recent values and discarding significant outliers.
+Nerva Workout is a work in progress. Load `workout.html` to see it in action. It's pretty basic so far.
 
-Nerva Workout will:
+Nerva Workout extends Nerva Collect to coalesce raw GPS measurements into digested locations using Kalman filtering.
+
+Nerva Workout will (eventually):
  * Draw a path on the map as you progress through your workout
  * Display speed and elevation information
  * Provide a CSV download of virtual (coalesced) data
