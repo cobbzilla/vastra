@@ -117,7 +117,6 @@ const NERVA = {
     },
 
     addCircle: function  (datum, color = 'red', fillColor = '#f03') {
-        NERVA.log('adding circle with radius '+(datum.accuracy != null ? datum.accuracy : 20));
         const circle = NERVA.L.circle([datum.lat, datum.lon], {
             color: color,
             fillColor: fillColor,
@@ -159,7 +158,6 @@ const NERVA = {
     },
 
     defaultGpsDotShapeFunc: function (datum) {
-        NERVA.log('adding GPS dot with radius '+(datum.accuracy != null ? datum.accuracy : 20));
         return NERVA.L.circle([datum.lat, datum.lon], {
             color: 'green',
             fillColor: '#22ff44',
