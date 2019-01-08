@@ -43,19 +43,6 @@
 
 <script>
 
-    function showPosition(datum) {
-        const row = $('<tr></tr>');
-        row.append($('<td>Time '+Date.now()+'</td>'));
-        row.append($('<td>Lat '+datum.lat+'</td>'));
-        row.append($('<td>Lon '+datum.lon+'</td>'));
-        row.append($('<td>Acc '+datum.accuracy+'</td>'));
-        row.append($('<td>Alt '+datum.altitude+'</td>'));
-        row.append($('<td>AltAcc '+datum.altitudeAccuracy+'</td>'));
-        $('#gpsdata').prepend(row);
-        setView(datum);
-        addCircle(datum);
-    }
-
     $(function () { initNerva(showPosition, L); });
 
 </script>
