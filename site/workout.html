@@ -45,6 +45,14 @@
 <div id="log"></div>
 <hr/>
 
+<button onclick="NERVA.generateCSV()">generate GPS CSV</button>
+<div id="csvDiv">
+</div>
+
+<button onclick="NERVA.generateCSV(WORKOUT.vdata, 'kcsvDiv')">generate Kalman CSV</button>
+<div id="kcsvDiv">
+</div>
+
 <button onclick="resetAll()">Clear ALL Data</button>
 
 </body>
