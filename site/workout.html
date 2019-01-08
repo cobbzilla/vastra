@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Nerva</title>
+    <title>Vastra</title>
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,26 +11,26 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
-    <link rel="stylesheet" type="text/css" href="nerva.css">
+    <link rel="stylesheet" type="text/css" href="vastra.css">
 
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
             integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
             crossorigin=""></script>
     <script src="jquery-3.3.1.min.js"></script>
-    <script src="nerva.js"></script>
-    <script src="nerva_kalman.js"></script>
-    <script src="nerva_workout.js"></script>
+    <script src="vastra.js"></script>
+    <script src="vastra_kalman.js"></script>
+    <script src="vastra_workout.js"></script>
 </head>
 
 <body>
 
 <div id="map" style="width: 600px; height: 400px;"></div>
 
-<button id="btnStart" onclick="NERVA.startTracking()">Start Workout</button>
-<button id="btnPause" onclick="NERVA.pauseTracking()">Pause Workout</button>
-<button id="btnStop" onclick="NERVA.stopTracking()">End Workout</button>
+<button id="btnStart" onclick="VASTRA.startTracking()">Start Workout</button>
+<button id="btnPause" onclick="VASTRA.pauseTracking()">Pause Workout</button>
+<button id="btnStop" onclick="VASTRA.stopTracking()">End Workout</button>
 
-<button id="btnRawGps" onclick="NERVA.toggleGpsDots()">GPS</button>
+<button id="btnRawGps" onclick="VASTRA.toggleGpsDots()">GPS</button>
 
 <div>
     <table border="1" cellspacing="2" cellpadding="2">
@@ -45,11 +45,11 @@
 <div id="log"></div>
 <hr/>
 
-<button onclick="NERVA.generateCSV()">generate GPS CSV</button>
+<button onclick="VASTRA.generateCSV()">generate GPS CSV</button>
 <div id="csvDiv">
 </div>
 
-<button onclick="NERVA.generateCSV(WORKOUT.vdata, 'kcsvDiv')">generate Kalman CSV</button>
+<button onclick="VASTRA.generateCSV(WORKOUT.vdata, 'kcsvDiv')">generate Kalman CSV</button>
 <div id="kcsvDiv">
 </div>
 
@@ -58,7 +58,7 @@
 </body>
 
 <script>
-    $(function () { NERVA.init(WORKOUT.init(), L, false); });
+    $(function () { VASTRA.init(WORKOUT.init(), L, false); });
 </script>
 
 </html>

@@ -154,7 +154,7 @@ const Tracker1D = {
             defaultAccuracy: function () { return 20; },
             getAccuracy: function () {
                 if (this.accuracyValues.length === 0) return this.defaultAccuracy();
-                NERVA.log('getAccuracy: vals='+JSON.stringify(this.accuracyValues));
+                VASTRA.log('getAccuracy: vals='+JSON.stringify(this.accuracyValues));
                 let sum = 0.0;
                 for (let i=0; i<this.accuracyValues.length; i++) sum += this.accuracyValues[i];
                 return 1 + Math.floor(sum / this.accuracyValues.length);
@@ -171,7 +171,7 @@ const KALMAN = function () {
         lastLocation: null,
         predicted: false,
         handleGPS: function (location) {
-            // NERVA.log('Kalman.handleGPS('+JSON.stringify(location)+') starting');
+            // VASTRA.log('Kalman.handleGPS('+JSON.stringify(location)+') starting');
             // Reusable
             const accuracy = location.accuracy;
 
@@ -220,11 +220,11 @@ const KALMAN = function () {
             // Reset predicted flag
             this.predicted = false;
             this.lastLocation = location;
-            // NERVA.log('Kalman.handleGPS('+JSON.stringify(location)+') finished OK, predicted now=false');
+            // VASTRA.log('Kalman.handleGPS('+JSON.stringify(location)+') finished OK, predicted now=false');
         },
 
         location: function () {
-            // NERVA.log('Kalman.location() starting');
+            // VASTRA.log('Kalman.location() starting');
             this.latTracker.predict(0.0);
             this.lonTracker.predict(0.0);
             if (this.altTracker != null) this.altTracker.predict(0.0);
@@ -242,7 +242,7 @@ const KALMAN = function () {
             };
 
             this.predicted = true;
-            // NERVA.log('Kalman.location() returning ' + JSON.stringify(point));
+            // VASTRA.log('Kalman.location() returning ' + JSON.stringify(point));
             return point;
         }
     };

@@ -23,39 +23,39 @@ const WORKOUT = {
     handleGPS: function (loc) { return WORKOUT.kalman == null ? null : WORKOUT.kalman.handleGPS(loc); },
 
     init: function () {
-        NERVA.onStart = function (wasPaused) {
+        VASTRA.onStart = function (wasPaused) {
             $('#btnStart').hide();
             $('#btnPause').show();
             $('#btnStop').show();
             if (!wasPaused) WORKOUT.vdata = [];
-            NERVA.resetLog();
+            VASTRA.resetLog();
             WORKOUT.startUpdates();
         };
-        NERVA.onPause = function () {
+        VASTRA.onPause = function () {
             $('#btnStart').show();
             $('#btnPause').hide();
             $('#btnStop').show();
             WORKOUT.stopUpdates();
         };
-        NERVA.onStop = function () {
+        VASTRA.onStop = function () {
             $('#btnStart').show();
             $('#btnPause').hide();
             $('#btnStop').hide();
             WORKOUT.stopUpdates();
         };
-        NERVA.onStop();
+        VASTRA.onStop();
         return WORKOUT.handleGPS;
     },
 
     sampleKalmanPoint: function () {
         if (WORKOUT.kalman == null) {
-            NERVA.log('sampleKalmanPoint: kalman was null');
+            VASTRA.log('sampleKalmanPoint: kalman was null');
         } else {
             const datum = WORKOUT.kalman.location();
-            NERVA.showDataRow(datum);
+            VASTRA.showDataRow(datum);
             WORKOUT.vdata.push(datum);
-            NERVA.log('defined new vpoint: ' + JSON.stringify(datum));
-            return NERVA.showPosition(datum);
+            VASTRA.log('defined new vpoint: ' + JSON.stringify(datum));
+            return VASTRA.showPosition(datum);
         }
     }
 };

@@ -5,7 +5,7 @@ const S_TRACKING = 'tracking';
 const S_PAUSED = 'paused';
 const S_OFF = 'off';
 
-const NERVA = {
+const VASTRA = {
     watch: null,
     mapApiToken: null,
     map: null,
@@ -16,25 +16,25 @@ const NERVA = {
     gpsHandlerFunc: null,
     paused: false,
 
-    init: function (gpsHandlerFunc = NERVA.showDataRow, L = L, start = true) {
-        NERVA.L = L;
-        NERVA.map = L.map('map').fitWorld();
-        NERVA.gpsHandlerFunc = gpsHandlerFunc;
+    init: function (gpsHandlerFunc = VASTRA.showDataRow, L = L, start = true) {
+        VASTRA.L = L;
+        VASTRA.map = L.map('map').fitWorld();
+        VASTRA.gpsHandlerFunc = gpsHandlerFunc;
 
-        NERVA.mapApiToken = localStorage.getItem(MB_TOKEN_KEY);
-        if (typeof NERVA.mapApiToken === "undefined" || NERVA.mapApiToken == null) {
-            NERVA.mapApiToken = window.prompt('API key for MapBox');
-            localStorage.setItem(MB_TOKEN_KEY, NERVA.mapApiToken)
+        VASTRA.mapApiToken = localStorage.getItem(MB_TOKEN_KEY);
+        if (typeof VASTRA.mapApiToken === "undefined" || VASTRA.mapApiToken == null) {
+            VASTRA.mapApiToken = window.prompt('API key for MapBox');
+            localStorage.setItem(MB_TOKEN_KEY, VASTRA.mapApiToken)
         }
 
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='+NERVA.mapApiToken, {
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='+VASTRA.mapApiToken, {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             maxZoom: 18,
             id: 'mapbox.streets'
-        }).addTo(NERVA.map);
+        }).addTo(VASTRA.map);
 
         if (navigator.geolocation) {
-            if (start) NERVA.startTracking();
+            if (start) VASTRA.startTracking();
         } else {
             alert("Geolocation is not supported by this browser.");
         }
@@ -47,56 +47,56 @@ const NERVA = {
     },
 
     startTracking: function () {
-        if (NERVA.watch != null || NERVA.state() === S_TRACKING) {
+        if (VASTRA.watch != null || VASTRA.state() === S_TRACKING) {
             console.log("startTracking: already tracking GPS");
         } else {
-            const wasPaused = NERVA.paused;
-            if (!wasPaused) NERVA.gpsData = [];
+            const wasPaused = VASTRA.paused;
+            if (!wasPaused) VASTRA.gpsData = [];
 
-            NERVA.paused = false;
-            NERVA.watch = navigator.geolocation.watchPosition(function (position) {
-                const datum = NERVA.gpsDatum(position);
-                // NERVA.log("watchPosition: GPS coords "+JSON.stringify(datum));
-                NERVA.gpsData.push(datum);
-                NERVA.gpsHandlerFunc(datum);
-                if (typeof NERVA.onGps !== 'undefined' && NERVA.onGps != null) {
-                    NERVA.onGps(datum);
+            VASTRA.paused = false;
+            VASTRA.watch = navigator.geolocation.watchPosition(function (position) {
+                const datum = VASTRA.gpsDatum(position);
+                // VASTRA.log("watchPosition: GPS coords "+JSON.stringify(datum));
+                VASTRA.gpsData.push(datum);
+                VASTRA.gpsHandlerFunc(datum);
+                if (typeof VASTRA.onGps !== 'undefined' && VASTRA.onGps != null) {
+                    VASTRA.onGps(datum);
                 }
             });
-            if (typeof NERVA.onStart !== 'undefined' && NERVA.onStart != null) {
-                NERVA.onStart(wasPaused);
+            if (typeof VASTRA.onStart !== 'undefined' && VASTRA.onStart != null) {
+                VASTRA.onStart(wasPaused);
             }
         }
     },
 
     pauseTracking : function () {
-        navigator.geolocation.clearWatch(NERVA.watch);
-        NERVA.watch = null;
-        NERVA.paused = true;
-        if (typeof NERVA.onPause !== 'undefined' && NERVA.onPause != null) {
-            NERVA.onPause();
+        navigator.geolocation.clearWatch(VASTRA.watch);
+        VASTRA.watch = null;
+        VASTRA.paused = true;
+        if (typeof VASTRA.onPause !== 'undefined' && VASTRA.onPause != null) {
+            VASTRA.onPause();
         }
     },
 
     stopTracking : function () {
-        navigator.geolocation.clearWatch(NERVA.watch);
-        NERVA.watch = null;
-        NERVA.paused = false;
-        if (typeof NERVA.onStop !== 'undefined' && NERVA.onStop != null) {
-            NERVA.onStop();
+        navigator.geolocation.clearWatch(VASTRA.watch);
+        VASTRA.watch = null;
+        VASTRA.paused = false;
+        if (typeof VASTRA.onStop !== 'undefined' && VASTRA.onStop != null) {
+            VASTRA.onStop();
         }
     },
 
     setView: function (datum, zoom = null) {
-        if (zoom != null || !NERVA.zoomed) {
-            NERVA.map.setView([datum.lat, datum.lon], zoom == null ? 16 : zoom);
-            NERVA.zoomed = true;
+        if (zoom != null || !VASTRA.zoomed) {
+            VASTRA.map.setView([datum.lat, datum.lon], zoom == null ? 16 : zoom);
+            VASTRA.zoomed = true;
         }
     },
 
     showPosition: function (datum) {
-        NERVA.setView(datum);
-        return NERVA.addCircle(datum);
+        VASTRA.setView(datum);
+        return VASTRA.addCircle(datum);
     },
 
 
@@ -116,13 +116,13 @@ const NERVA = {
     },
 
     addCircle: function  (datum, color = 'red', fillColor = '#f03') {
-        const circle = NERVA.L.circle([datum.lat, datum.lon], {
+        const circle = VASTRA.L.circle([datum.lat, datum.lon], {
             color: color,
             fillColor: fillColor,
             fillOpacity: 0.5,
             radius: datum.accuracy != null ? 1+Math.floor(datum.accuracy/2) : 20
         });
-        circle.addTo(NERVA.map);
+        circle.addTo(VASTRA.map);
         return circle;
     },
 
@@ -135,17 +135,17 @@ const NERVA = {
         row.append($('<td>Alt '+datum.alt+'</td>'));
         row.append($('<td>AltAcc '+datum.altitudeAccuracy+'</td>'));
         $('#'+divId).prepend(row);
-        NERVA.showPosition(datum);
+        VASTRA.showPosition(datum);
     },
 
-    generateCSV: function (data = NERVA.gpsData, divId = 'csvDiv') {
+    generateCSV: function (data = VASTRA.gpsData, divId = 'csvDiv') {
         let csvData = "Time,Lat,Lon,Accuracy,Alt,AltAccuracy\r\n";
         for (let i=0; i < data.length; i++) {
             const datum = data[i];
             csvData = csvData + datum.time + "," + datum.lat+","+datum.lon+","+datum.accuracy+","+datum.altitude+","+datum.altitudeAccuracy+"\r\n";
         }
         const now = Date.now();
-        $('#'+divId).html('<a download="nerva_'+now+'.csv" href="data:text/csv;charset=utf-8,'+encodeURIComponent(csvData)+'">download CSV</a>');
+        $('#'+divId).html('<a download="vastra_'+now+'.csv" href="data:text/csv;charset=utf-8,'+encodeURIComponent(csvData)+'">download CSV</a>');
     },
 
     log: function (msg, logId = 'log') {
@@ -157,7 +157,7 @@ const NERVA = {
     },
 
     defaultGpsDotShapeFunc: function (datum) {
-        return NERVA.L.circle([datum.lat, datum.lon], {
+        return VASTRA.L.circle([datum.lat, datum.lon], {
             color: 'green',
             fillColor: '#44ff88',
             fillOpacity: 0.1,
@@ -165,27 +165,27 @@ const NERVA = {
         });
     },
     showGpsDots: function(shapeFunc = this.defaultGpsDotShapeFunc, btnId = 'btnRawGps') {
-        NERVA.hideGpsDots();
-        for (let i = 0; i < NERVA.gpsData.length; i++) {
-            const datum = NERVA.gpsData[i];
+        VASTRA.hideGpsDots();
+        for (let i = 0; i < VASTRA.gpsData.length; i++) {
+            const datum = VASTRA.gpsData[i];
 
             const shape = shapeFunc(datum);
-            shape.addTo(NERVA.map);
-            NERVA.gpsDots.push(shape);
+            shape.addTo(VASTRA.map);
+            VASTRA.gpsDots.push(shape);
         }
-        $('#'+btnId).text('GPS: '+NERVA.gpsData.length+ " points");
-        NERVA.onGps = function () { NERVA.showGpsDots(); };
+        $('#'+btnId).text('GPS: '+VASTRA.gpsData.length+ " points");
+        VASTRA.onGps = function () { VASTRA.showGpsDots(); };
     },
     hideGpsDots: function (btnId = 'btnRawGps') {
-        for (let i = 0; i < NERVA.gpsDots.length; i++) {
-            NERVA.map.removeLayer(NERVA.gpsDots[i]);
+        for (let i = 0; i < VASTRA.gpsDots.length; i++) {
+            VASTRA.map.removeLayer(VASTRA.gpsDots[i]);
         }
-        NERVA.gpsDots = [];
+        VASTRA.gpsDots = [];
         $('#'+btnId).text('GPS');
-        NERVA.onGps = null;
+        VASTRA.onGps = null;
     },
-    hasGpsDots: function () { return NERVA.gpsDots.length > 0; },
-    toggleGpsDots: function () { return NERVA.hasGpsDots() ? NERVA.hideGpsDots() : NERVA.showGpsDots(); },
+    hasGpsDots: function () { return VASTRA.gpsDots.length > 0; },
+    toggleGpsDots: function () { return VASTRA.hasGpsDots() ? VASTRA.hideGpsDots() : VASTRA.showGpsDots(); },
 
     resetAll:  function () {
         localStorage.clear();

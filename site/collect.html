@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Nerva</title>
+    <title>Vastra</title>
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,20 +11,20 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
-    <link rel="stylesheet" type="text/css" href="nerva.css">
+    <link rel="stylesheet" type="text/css" href="vastra.css">
 
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
             integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
             crossorigin=""></script>
     <script src="jquery-3.3.1.min.js"></script>
-    <script src="nerva.js"></script>
+    <script src="vastra.js"></script>
 </head>
 
 <body>
 
 <div id="map" style="width: 600px; height: 400px;"></div>
 
-<button onclick="NERVA.generateCSV()">generate CSV</button>
+<button onclick="VASTRA.generateCSV()">generate CSV</button>
 <div id="csvDiv">
 </div>
 
@@ -37,12 +37,12 @@
     </table>
 </div>
 
-<button onclick="NERVA.resetAll()">Clear ALL Data</button>
+<button onclick="VASTRA.resetAll()">Clear ALL Data</button>
 
 </body>
 
 <script>
-    $(function () { NERVA.init(); });
+    $(function () { VASTRA.init(); });
 </script>
 
 </html>
