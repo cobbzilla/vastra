@@ -90,8 +90,7 @@ const NERVA = {
     setView: function (datum, zoom = null) {
         if (zoom != null || !NERVA.zoomed) {
             NERVA.map.setView([datum.lat, datum.lon], zoom == null ? 16 : zoom);
-        } else {
-            NERVA.map.setView([datum.lat, datum.lon]);
+            NERVA.zoomed = true;
         }
     },
 
@@ -160,8 +159,8 @@ const NERVA = {
     defaultGpsDotShapeFunc: function (datum) {
         return NERVA.L.circle([datum.lat, datum.lon], {
             color: 'green',
-            fillColor: '#22ff44',
-            fillOpacity: 0.3,
+            fillColor: '#44ff88',
+            fillOpacity: 0.1,
             radius: datum.accuracy != null ? 1+Math.floor(datum.accuracy/2) : 20
         });
     },
