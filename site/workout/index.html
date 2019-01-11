@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Vastra</title>
+    <title>Vastra Workout</title>
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,10 +29,16 @@
 
 <button id="btnRawGps" onclick="VASTRA.toggleGpsDots()">GPS</button>
 
+<hr/>
+<div id="gps_stats"></div>
+<hr/>
+<div id="kalman_stats"></div>
+<hr/>
+
 <div>
     <table border="1" cellspacing="2" cellpadding="2">
         <thead>
-        <tr><th>Time</th><th>Lat</th><th>Lon</th><th>Acc</th><th>Alt</th><th>AltAcc</th></tr>
+        <tr><th>Time</th><th>Lat</th><th>Lon</th><th>Acc</th><th>Alt</th><th>AltAcc</th><th>Distance</th><th>Speed</th></tr>
         </thead>
         <tbody id="gpsdata"></tbody>
     </table>
@@ -55,7 +61,7 @@
 </body>
 
 <script>
-    $(function () { VASTRA.init(WORKOUT.init(), L, false); });
+    $(function () { VASTRA.init(WORKOUT.init(), L, WORKOUT.acceleration, false); });
 </script>
 
 </html>

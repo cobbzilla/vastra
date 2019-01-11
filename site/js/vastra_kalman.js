@@ -19,7 +19,7 @@ const COORDINATE_NOISE = 4.0 * METER_TO_DEG;
 const ALTITUDE_NOISE = 10.0;
 
 const Tracker1D = {
-    create: function (timeStep, processNoise) {
+    create: function (name, timeStep, processNoise) {
         const mt = timeStep;
         const mt2 = mt * mt;
         const mt2d2 = mt2 / 2.0;
@@ -38,6 +38,7 @@ const Tracker1D = {
         const mPd = mQd;
 
         return {
+            name: name,
             accuracyValues: [],
 
             // time step
@@ -62,7 +63,6 @@ const Tracker1D = {
             mPb: mPb,
             mPc: mPc,
             mPd: mPd,
-
 
             /**
              * Reset the filter to the given state.
@@ -125,7 +125,6 @@ const Tracker1D = {
                 this.mPd = Pd;
             },
 
-
             /**
              * Predict state.
              *
@@ -150,7 +149,7 @@ const Tracker1D = {
             },
 
             getPosition: function () { return this.mXa; },
-            getVelocity: function () { return this.mXb; },
+            getVelocity: function () { return typeof this.mXb === 'undefined' || this.mXb == null ? 0.0 : this.mXb; },
             defaultAccuracy: function () { return 20; },
             getAccuracy: function () {
                 if (this.accuracyValues.length === 0) return this.defaultAccuracy();
@@ -163,28 +162,45 @@ const Tracker1D = {
     }
 };
 
+const ZERO_GPS = {
+    lat: 0,
+    lon: 0,
+    alt: 0
+};
+
 const KALMAN = function () {
     return {
         latTracker: null,
         lonTracker: null,
         altTracker: null,
         lastLocation: null,
+        firstEstimate: null,
+        lastEstimate: null,
+
         predicted: false,
-        handleGPS: function (location) {
+        points: [],
+        numPoints: function () { return this.points.length; },
+
+        handleGPS: function (location, accelerationFunc) {
             // VASTRA.log('Kalman.handleGPS('+JSON.stringify(location)+') starting');
             // Reusable
             const accuracy = location.accuracy;
+
+            // todo: consider dropping if accuracy is very poor?
+
+            // add point
+            this.points.push(location);
 
             // Latitude
             const lat = location.latitude;
             const latNoise = accuracy * METER_TO_DEG;
 
             if (this.latTracker == null) {
-                this.latTracker = Tracker1D.create(TIME_STEP, COORDINATE_NOISE);
-                this.latTracker.setState(lat, 0.0, latNoise);
+                this.latTracker = Tracker1D.create('lat', TIME_STEP, COORDINATE_NOISE);
+                this.latTracker.setState(lat, this.latTracker.getVelocity(), latNoise);
             }
 
-            if (!this.predicted) this.latTracker.predict(0.0);
+            if (!this.predicted) this.latTracker.predict(accelerationFunc().lat);
 
             this.latTracker.update(lat, latNoise);
 
@@ -193,11 +209,11 @@ const KALMAN = function () {
             const lonNoise = accuracy * Math.cos(Math.radians(lon)) * METER_TO_DEG ;
 
             if (this.lonTracker == null) {
-                this.lonTracker = Tracker1D.create(TIME_STEP, COORDINATE_NOISE);
-                this.lonTracker.setState(lon, 0.0, lonNoise);
+                this.lonTracker = Tracker1D.create('lon', TIME_STEP, COORDINATE_NOISE);
+                this.lonTracker.setState(lon, this.lonTracker.getVelocity(), lonNoise);
             }
 
-            if (!this.predicted) this.lonTracker.predict(0.0);
+            if (!this.predicted) this.lonTracker.predict(accelerationFunc().lon);
 
             this.lonTracker.update(lon, lonNoise);
 
@@ -208,11 +224,11 @@ const KALMAN = function () {
                 const altNoise = accuracy;
 
                 if (this.altTracker == null) {
-                    this.altTracker = new Tracker1D.create(TIME_STEP, ALTITUDE_NOISE);
-                    this.altTracker.setState(alt, 0.0, altNoise);
+                    this.altTracker = new Tracker1D.create('alt', TIME_STEP, ALTITUDE_NOISE);
+                    this.altTracker.setState(alt, this.altTracker.getVelocity(), altNoise);
                 }
 
-                if (!this.predicted) this.altTracker.predict(0.0);
+                if (!this.predicted) this.altTracker.predict(accelerationFunc().alt);
 
                 this.altTracker.update(alt, altNoise);
             }
@@ -223,11 +239,11 @@ const KALMAN = function () {
             // VASTRA.log('Kalman.handleGPS('+JSON.stringify(location)+') finished OK, predicted now=false');
         },
 
-        location: function () {
+        location: function (acceleration = ZERO_GPS) {
             // VASTRA.log('Kalman.location() starting');
-            this.latTracker.predict(0.0);
-            this.lonTracker.predict(0.0);
-            if (this.altTracker != null) this.altTracker.predict(0.0);
+            this.latTracker.predict(acceleration.lat);
+            this.lonTracker.predict(acceleration.lon);
+            if (this.altTracker != null) this.altTracker.predict(acceleration.alt);
             const point = {
                 time: Date.now(),
                 lat:       this.latTracker.getPosition(),
@@ -238,11 +254,19 @@ const KALMAN = function () {
                 alt:       this.lastLocation != null && this.lastLocation.altitude != null && this.altTracker != null ? this.altTracker.getPosition() : null,
                 accuracy:  this.latTracker.getAccuracy(),
                 altitudeAccuracy: null,
-                altAccuracy:      null
+                altAccuracy:      null,
+                points: this.points,
+                prevEstimate: this.lastEstimate
             };
+            point.distance = dist(point.prevEstimate, point);
+            point.speed = speed(point.prevEstimate, point);
 
+            // reset state
             this.predicted = true;
-            // VASTRA.log('Kalman.location() returning ' + JSON.stringify(point));
+            this.points = [];
+            // VASTRA.log('Kalman.location() returning ' + logPoint(point));
+            this.lastEstimate = point;
+            if (this.firstEstimate == null) this.firstEstimate = point;
             return point;
         }
     };
