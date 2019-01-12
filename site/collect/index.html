@@ -22,25 +22,36 @@
 
 <div id="map" style="width: 600px; height: 400px;"></div>
 
-<button onclick="VASTRA.generateCSV()">generate CSV</button>
-<div id="csvDiv">
-</div>
+<button id="btnStart" onclick="VASTRA.startTracking()">Start</button>
+<button id="btnStop" onclick="VASTRA.stopTracking()">Stop</button>
+
+<hr/>
+<div id="gps_stats"></div>
+<hr/>
 
 <div>
     <table border="1" cellspacing="2" cellpadding="2">
         <thead>
-            <tr><th>Time</th><th>Lat</th><th>Lon</th><th>Acc</th><th>Alt</th><th>AltAcc</th></tr>
+        <tr><th>Time</th><th>Lat</th><th>Lon</th><th>Acc</th><th>Alt</th><th>AltAcc</th><th>Distance</th><th>Speed</th></tr>
         </thead>
         <tbody id="gpsdata"></tbody>
     </table>
 </div>
 
-<button onclick="VASTRA.resetAll()">Clear ALL Data</button>
+<button onclick="VASTRA.generateCSV()">generate GPS CSV</button>
+<div id="csvDiv">
+</div>
+
+<hr/>
+<div id="log"></div>
+<hr/>
+
+<button onclick="resetAll()">Clear ALL Data (includes API keys)</button>
 
 </body>
 
 <script>
-    $(function () { VASTRA.init(); });
+    $(function () { VASTRA.init(COLLECT.init(), L); });
 </script>
 
 </html>

@@ -65,7 +65,7 @@ const VASTRA = {
                 VASTRA.lastPosition = datum;
                 // VASTRA.log("watchPosition: GPS coords "+JSON.stringify(datum));
                 VASTRA.gpsData.push(datum);
-                VASTRA.gpsHandlerFunc(datum, VASTRA.accelerationFunc);
+                if (VASTRA.gpsHandlerFunc != null) VASTRA.gpsHandlerFunc(datum, VASTRA.accelerationFunc);
                 if (typeof VASTRA.onGps !== 'undefined' && VASTRA.onGps != null) {
                     VASTRA.onGps(datum);
                 }
@@ -111,8 +111,10 @@ const VASTRA = {
 
 
     gpsDatum: function (position, lastPosition = null) {
+        const now = Date.now();
         const datum = {
-            time: Date.now(),
+            time: now,
+            date: new Date(now),
             lat:       position.coords.latitude,
             latitude:  position.coords.latitude,
             lon:       position.coords.longitude,
@@ -140,7 +142,7 @@ const VASTRA = {
         return circle;
     },
 
-    showDataRow: function (datum, divId = 'gpsdata') {
+    showDataRow: function (datum, accelerationFunc, divId = 'gpsdata') {
         const row = $('<tr></tr>');
         row.append($('<td>Time '+new Date(datum.time)+'</td>'));
         row.append($('<td>Lat '+datum.lat+'</td>'));
